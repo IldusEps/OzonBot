@@ -6,7 +6,7 @@ import keyboard
 # Инициализация телеграмм-бота
 bot = telebot.TeleBot(os.getenv("TELEGRAM_API"))
 
-USERS = [885172912]
+USERS = [885172912, 1957670122]
 
 
 @bot.message_handler(commands=['start'])
