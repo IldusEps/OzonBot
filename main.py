@@ -30,8 +30,10 @@ def get_bar_code(numbers):
     if res.status_code == 200:
         with open('metadata.pdf', 'wb') as f:
             f.write(res.content)
+        return True
     else:
         print("Ошибка")
+        return False
 
 
 def get_awaiting_deliver():
@@ -70,6 +72,9 @@ def get_awaiting_deliver():
 
 
 def create_pdf_file(first_rows=True):
+    if get_bar_code(get_awaiting_deliver()) == False:
+        return False
+
     input1 = PdfReader(open("metadata.pdf", "rb"), strict=False)
 
     margin_x = 40
@@ -89,9 +94,8 @@ def create_pdf_file(first_rows=True):
     output = PdfWriter()
 
     y, x = dataBase.get_unfilled()
-    print(y, x)
 
-    for e, page in enumerate(input1.pages):
+    for page in input1.pages:
         if (x + 1) * (y + 1) > max_count:
             output.add_page(new_page)
             new_page = PageObject.create_blank_page(
@@ -120,10 +124,10 @@ def create_pdf_file(first_rows=True):
         else:
             y += 1
 
-    print(dataBase.dataA4)
     output.add_page(new_page)
     output.write(open("result.pdf", "wb"))
     dataBase.data_save()
+    return True
 
 
 def create_count_pdf(count):

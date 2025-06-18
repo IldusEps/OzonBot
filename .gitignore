@@ -3,3 +3,6 @@
 .env*
 tests/__pycache__/
 .vscode/launch.json
+result.pdf
+data.txt
+result1.pdf

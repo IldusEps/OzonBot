@@ -17,14 +17,20 @@ def start_message(message):
 @bot.message_handler(content_types=['text'])
 def text(message):
     match message.text:
-        case "Новый лист":
-            dataBase.data_clear()
-            create_pdf_file()
-            # bot.send_document(message.chat.id, open('result.pdf', 'rb'))
-
-        case "Продолжить лист":
-            create_pdf_file()
-            # bot.send_document(message.chat.id, open('result.pdf', 'rb'))
+        case "Продолжить лист" | "Новый лист":
+            if message.text == "Новый лист":
+                dataBase.data_clear()
+            bot.send_message(message.chat.id, "Ждите...", parse_mode="HTML",
+                             reply_markup=keyboard.MainKeyboard)
+            if create_pdf_file() == False:
+                bot.send_message(message.chat.id, "Новых заказов нет!", parse_mode="HTML",
+                                 reply_markup=keyboard.MainKeyboard)
+            else:
+                try:
+                    bot.send_document(
+                        message.chat.id, open('result.pdf', 'rb'))
+                except:
+                    print("Ошибка")
 
 
 bot.polling(none_stop=True, interval=0)
