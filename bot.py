@@ -6,16 +6,23 @@ import keyboard
 # Инициализация телеграмм-бота
 bot = telebot.TeleBot(os.getenv("TELEGRAM_API"))
 
+USERS = [885172912]
+
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
     """ Ввод команды /start в боте """
     bot.send_message(message.chat.id, "Привет", parse_mode="HTML",
                      reply_markup=keyboard.MainKeyboard)
+    print(message.chat.id)
 
 
 @bot.message_handler(content_types=['text'])
 def text(message):
+    if message.chat.id not in USERS:
+        bot.send_message(message.chat.id, "Доступ к боту заблокирован", parse_mode="HTML",
+                         reply_markup=keyboard.MainKeyboard)
+        return False
     match message.text:
         case "Продолжить лист" | "Новый лист":
             if message.text == "Новый лист":
