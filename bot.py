@@ -29,11 +29,15 @@ def text(message):
                 dataBase.data_clear()
             bot.send_message(message.chat.id, "Ждите...", parse_mode="HTML",
                              reply_markup=keyboard.MainKeyboard)
-            if create_pdf_file() == False:
+            result = create_pdf_file(False)
+            if result is False:
                 bot.send_message(message.chat.id, "Новых заказов нет!", parse_mode="HTML",
                                  reply_markup=keyboard.MainKeyboard)
             else:
+                text = "Готово!" if (not result[1]) else "Возьмите новый лист!"
                 try:
+                    bot.send_message(message.chat.id, text, parse_mode="HTML",
+                                     reply_markup=keyboard.MainKeyboard)
                     bot.send_document(
                         message.chat.id, open('result.pdf', 'rb'))
                 except:

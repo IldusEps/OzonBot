@@ -93,7 +93,9 @@ def create_pdf_file(first_rows=True):
     new_page = PageObject.create_blank_page(None, total_width, total_height)
     output = PdfWriter()
 
-    y, x = dataBase.get_unfilled()
+    y_source, x_source, droping = dataBase.get_unfilled(first_rows)
+    y, x = y_source, x_source
+    offset = 0
 
     for page in input1.pages:
         if (x + 1) * (y + 1) > max_count:
@@ -102,6 +104,7 @@ def create_pdf_file(first_rows=True):
                 None, total_width, total_height)
             x = 0
             y = 0
+            offset = 0
             dataBase.data_clear()
         # page.rotate(-90)
         # page.transfer_rotation_to_content()
@@ -115,19 +118,28 @@ def create_pdf_file(first_rows=True):
                 x += 1
                 y = 0
 
-        # Add second page with moving along the axis x
-        new_page.merge_translated_page(
-            page, margin_x + (page.mediabox.upper_right[0] + 20) * x,  margin_y + (page.mediabox.upper_right[1]) * y)
+        if first_rows and y == y_source and y == max_y_count - 1:
+            new_page.merge_translated_page(
+                page, margin_x + (page.mediabox.upper_right[0] + 20) * offset,  margin_y + (page.mediabox.upper_right[1]) * y)
+            offset += 1
+        elif first_rows is False and x == x_source and x == max_x_count - 1:
+            new_page.merge_translated_page(
+                page, margin_x + (page.mediabox.upper_right[0] + 20) * x,  margin_y + (page.mediabox.upper_right[1]) * offset)
+            offset += 1
+        else:
+            new_page.merge_translated_page(
+                page, margin_x + (page.mediabox.upper_right[0] + 20) * x,  margin_y + (page.mediabox.upper_right[1]) * y)
         dataBase.dataA4[y][x] = 1
         if first_rows:
             x += 1
         else:
             y += 1
 
+    print(dataBase.dataA4)
     output.add_page(new_page)
     output.write(open("result.pdf", "wb"))
     dataBase.data_save()
-    return True
+    return True, droping
 
 
 def create_count_pdf(count):
@@ -139,6 +151,4 @@ def create_count_pdf(count):
     output.write(open("metadata.pdf", "wb"))
 
 
-# get_bar_code(get_awaiting_deliver())
-# create_count_pdf(16)
-# create_pdf_file()
+# create_count_pdf(7)
