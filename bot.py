@@ -53,7 +53,7 @@ def posting():
             for user in USERS:
                 bot.send_message(
                     user, "Новый заказ!", parse_mode="HTML", reply_markup=keyboard.MainKeyboard)
-        time.sleep(700)
+        time.sleep(400)
 
 
 th1 = threading.Thread(target=posting, )
