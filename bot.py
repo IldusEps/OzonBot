@@ -2,6 +2,8 @@ import telebot
 import os
 from main import *
 import keyboard
+import threading
+import time
 
 # Инициализация телеграмм-бота
 bot = telebot.TeleBot(os.getenv("TELEGRAM_API"))
@@ -42,6 +44,21 @@ def text(message):
                         message.chat.id, open('result.pdf', 'rb'))
                 except:
                     print("Ошибка")
+
+
+def posting():
+    while True:
+        delivers = get_awaiting_deliver()
+        if delivers != []:
+            for user in USERS:
+                bot.send_message(
+                    user, "Новый заказ!", parse_mode="HTML", reply_markup=keyboard.MainKeyboard)
+        time.sleep(700)
+
+
+th1 = threading.Thread(target=posting, )
+th1.start()
+th1.join()
 
 
 bot.polling(none_stop=True, interval=0)

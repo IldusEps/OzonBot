@@ -30,6 +30,8 @@ def get_bar_code(numbers):
     if res.status_code == 200:
         with open('metadata.pdf', 'wb') as f:
             f.write(res.content)
+
+        print(numbers)
         return True
     else:
         print("Ошибка")
@@ -64,6 +66,7 @@ def get_awaiting_deliver():
         for post in res["result"]["postings"]:
             numbers.append(post["posting_number"])
 
+        print(numbers)
         return numbers
     else:
         print("Ошибка")
